@@ -4,12 +4,12 @@
 #define BUFFERSIZE 1
 
 typedef struct{
-  long long int memory_address;
+  long long int memory_address;`    `
   long long int page_number;
   long long int offset;
-  M_REFERENCE *prev;
-  M_REFERENCE *next;
-  
+  void *prev;
+  void *next;
+
 } M_REFERENCE;
 
 
@@ -44,7 +44,7 @@ int main(){
                 }else if(buffer[0] == 'I'){
                     dec_num = extract_number(buffer);
                     printf("%lli\n",dec_num,dec_num);
-                }   
+                }
             }
             //fprintf(stdout,"%s\n",buffer);
         }
@@ -57,7 +57,7 @@ long long int extract_number(char * raw_data){
     char extracted_hex[9];
     long long int extracted_dec;
     int length;
-    
+
     length = strlen(raw_data);
     for(int i=3; i<length; i++){
         if(raw_data[i] != ','){
