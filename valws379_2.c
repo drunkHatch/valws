@@ -45,7 +45,7 @@ int main(int argc, char *argv[]){
         pagesize = atoi(argv[2]);
         wsize = atoi(argv[3]);
     }
-    
+
 
     //open stdin for reading
     instream = fopen("/dev/stdin","r");
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]){
                     if (buffer[1] == 'S' || buffer[1] == 'M' ||  buffer[1] == 'L'){
                         dec_num = extract_number(buffer);
                         printf("%lli\n",dec_num/pagesize);
-                        
+
                         page_number = dec_num/pagesize;
                         if (window->amount < wsize){
                             addBack(window, page_number);
@@ -69,13 +69,13 @@ int main(int argc, char *argv[]){
                             leaveFront (window);
                             addBack(window, page_number);
                         }
-                
+
                     }
                 }else if(buffer[0] == 'I'){
                     if(buffer[1] == ' '){
                         dec_num = extract_number(buffer);
                         printf("%lli\n",dec_num/pagesize);
-                        
+
                         page_number = dec_num/pagesize;
                         if (window->amount < wsize){
                             addBack(window, page_number);
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]){
                             leaveFront (window);
                             addBack(window, page_number);
                         }
-                        
+
                     }
                 }
             }
@@ -98,7 +98,7 @@ long long int extract_number(char * raw_data){
     char extracted_hex[12];
     long long int extracted_dec;
     int length;
-    
+
     length = strlen(raw_data);
     for(int i=3; i<length; i++){
         if(raw_data[i] != ','){
@@ -124,12 +124,12 @@ bool isfull (const struct Window * window, int wsize){
 
 
 void leaveFront (struct Window * window){
-	assert(!isEmpty(window));	
+	assert(!isEmpty(window));
 	struct Node *old_first;
 
     old_first = window->first;
     window->first = old_first->next;
-	free(old_first->page_number);
+	//free(old_first->page_number); //把这行comment,为啥要free 一个Page number
     free(old_first);
 	if(window->first != NULL){
 		window->first-> prev = NULL;}
@@ -157,12 +157,3 @@ void addBack (struct Window * window, long long int page_number){
 		//free(new_node);
 	}
 }
-
-
-
-
-
-
-
-
-
