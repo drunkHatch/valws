@@ -3,7 +3,9 @@ Our program runs on lab machine.
 Use makefile: 
 
 "make" to run the program valws379 without "-i" option
+
 "make clean" to prepare for next run
+
 "make -i" to run with "-i" option
 
 We did design of the whole program together(linked list, hash table, pipe, gnuplots)
