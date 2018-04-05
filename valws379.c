@@ -17,7 +17,7 @@
 // node for linked list
 struct ListNode{
     int bucket;   // divided by bucket number
-    struct ListNode *prev;
+    //struct ListNode *prev;
     struct ListNode *next;
 };
 struct HashTable{
@@ -29,7 +29,7 @@ struct HashTable{
 // node for table
 struct Node{
     long long int page_number;   // divided by 16(page size)
-    struct Node *prev;
+    //struct Node *prev;
     struct Node *next;
 };
 
@@ -74,11 +74,16 @@ int page_number_is_unique(long long int page_number_to_be_removed, int bucket){
     return 1;
 }
 
-void remove_node_on_table(int bucket){
+void remove_node_on_table_and_window(int bucket){
     int page_number_to_be_removed;
+    struct ListNode *old_head;
 
+    window->first = window->first->next;
+
+    old_head = real_table->table[bucket];
     page_number_to_be_removed = real_table->table[bucket]->page_number;
     real_table->table[bucket] = real_table->table[bucket]->next;
+    free(old_head);
 
     if (real_table->table[bucket] == NULL){
         real_table->unique_count--;
@@ -114,14 +119,13 @@ void add_new_node_on_table(long long int new_page_number, int bucket){
         }
         //add after check for dupliacte
         real_table->tails[bucket]->next = new_node;
-        new_node->prev = real_table->tails[bucket];
         real_table->tails[bucket] = new_node;
     }
 }
 
 void remove_old_window_node(){
     window->first = window->first->next;
-    window->first->prev = NULL;
+    //window->first->prev = NULL;
 }
 
 void add_new_window_node(int bucket){
@@ -131,7 +135,6 @@ void add_new_window_node(int bucket){
     new_node->bucket = bucket;
     if (window->last != NULL){
         window->last->next = new_node;
-        new_node->prev = window->last;
         new_node->next = NULL;
         window->last = new_node;
     }else{
@@ -201,8 +204,8 @@ int main(int argc, char *argv[]){
 
                             add_new_window_node(bucket);
                             add_new_node_on_table(page_number, bucket);
-                            remove_node_on_table(window->first->bucket);
-                            remove_old_window_node();
+                            remove_node_on_table_and_window(window->first->bucket);
+                            //remove_old_window_node();
 
                             printf("%d\n", real_table->unique_count);
 
@@ -229,8 +232,10 @@ int main(int argc, char *argv[]){
                         }else{
                             add_new_window_node(bucket);
                             add_new_node_on_table(page_number, bucket);
-                            remove_node_on_table(window->first->bucket);
-                            remove_old_window_node();
+
+                            remove_node_on_table_and_window(window->first->bucket);
+
+                            //remove_old_window_node();
 
                             printf("%d\n", real_table->unique_count);
 
@@ -282,9 +287,9 @@ int main(int argc, char *argv[]){
 
                             add_new_node_on_table(page_number, bucket);
 
-                            remove_node_on_table(window->first->bucket);
+                            remove_node_on_table_and_window(window->first->bucket);
 
-                            remove_old_window_node();
+                            //remove_old_window_node();
                             printf("%d\n", real_table->unique_count);
                             //leaveFront (window);
                             //addBack(window, page_number);
