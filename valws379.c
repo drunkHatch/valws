@@ -204,7 +204,7 @@ int main(int argc, char *argv[]){
                             remove_node_on_table(window->first->bucket);
                             remove_old_window_node();
 
-                            //printf("%d\n", real_table->unique_count);
+                            printf("%d\n", real_table->unique_count);
 
                             //leaveFront (window);
                             //addBack(window, page_number);
@@ -269,23 +269,23 @@ int main(int argc, char *argv[]){
                         page_number = dec_num/pagesize;
                         bucket = page_number % hash_factor;
                         if (window->amount < wsize){
-                            //add_new_window_node(bucket);
+                            add_new_window_node(bucket);
 
-                            //window->amount++;
+                            window->amount++;
 
-                            //add_new_node_on_table(page_number, bucket);
+                            add_new_node_on_table(page_number, bucket);
 
                             //addBack(window, page_number);
                             //window->amount = window->amount + 1;
                         }else{
-                            //add_new_window_node(bucket);
+                            add_new_window_node(bucket);
 
-                            //add_new_node_on_table(page_number, bucket);
+                            add_new_node_on_table(page_number, bucket);
 
-                            //remove_node_on_table(window->first->bucket);
+                            remove_node_on_table(window->first->bucket);
 
-                            //remove_old_window_node();
-                            //printf("%d\n", real_table->unique_count);
+                            remove_old_window_node();
+                            printf("%d\n", real_table->unique_count);
                             //leaveFront (window);
                             //addBack(window, page_number);
                             //TODO:  compare in the window and get unique
