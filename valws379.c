@@ -6,6 +6,7 @@
 
 #define BUFFERSIZE 1
 #define HASHCONSTANT 4
+#define NUM_COMMANDS 1
 
 // a linked list, add to tail and remove from head
     //next to tail
@@ -40,9 +41,6 @@ struct Window{
     struct ListNode *last;
 };
 
-
-long long int extract_number(char * raw_data);
-
 // init hash table here and they are GLOBAL
 struct Node         *table, *tails;
 struct Window       *window;
@@ -58,6 +56,24 @@ void init_hash_table_and_window(int hash_factor){
         real_table->table[i] = NULL;
         real_table->tails[i] = NULL;
     }
+}
+
+long long int extract_number(char * raw_data){
+    char extracted_hex[12];
+    long long int extracted_dec;
+    int length;
+
+    length = strlen(raw_data);
+    for(int i=3; i<length; i++){
+        if(raw_data[i] != ','){
+            extracted_hex[i-3] = raw_data[i];
+        }else{
+            extracted_hex[i-3] = '\0';
+        }
+    }
+    sscanf(extracted_hex, "%X", &extracted_dec);
+
+    return extracted_dec;
 }
 
 int page_number_is_unique(long long int page_number_to_be_removed, int bucket){
@@ -158,6 +174,11 @@ int main(int argc, char *argv[]){
     char            *file_name;
     int             file_line_count = 0;
 
+    //delcare for gnuplot
+    //FILE * temp = fopen("data.temp", "w");
+    FILE * gnuplotPipe = popen ("gnuplot -persistent", "w");
+    char * commandsForGnuplot[] = {"bin_width = 1"};
+
     // what?
     buffer_size = sizeof(unsigned char)*BUFFERSIZE;
     file_name = "data.csv";
@@ -165,6 +186,15 @@ int main(int argc, char *argv[]){
     //init window
     //window->first = NULL;
     //window->last = NULL;
+
+    //fprintf(gnuplotPipe, "e");
+    for (int i=0; i < NUM_COMMANDS; i++){
+        fprintf(gnuplotPipe, "%s \n", commandsForGnuplot[i]); //Send commands to gnuplot one by one.
+    }
+    //fprintf(gnuplotPipe, "plot '-' smooth acsplines\n");
+    fprintf(gnuplotPipe, "plot '-' smooth frequency with boxes\n");
+    
+
 
     if(argc == 3){                   //without [-i]
         pagesize = atoi(argv[1]);
@@ -193,7 +223,6 @@ int main(int argc, char *argv[]){
 
                             add_new_window_node(bucket);
 
-
                             //increase window amount
 
                             window->amount++; // let it out to control easily between if else statement
@@ -203,8 +232,7 @@ int main(int argc, char *argv[]){
 
                             add_new_node_on_table(page_number, bucket); // bug here
 
-                            //addBack(window, page_number);
-                            //window->amount = window->amount + 1;
+
                         }else{
 
                             add_new_window_node(bucket);
@@ -212,20 +240,18 @@ int main(int argc, char *argv[]){
                             remove_node_on_table_and_window(window->first->bucket);
                             //remove_old_window_node();
                             if (file_line_count == 0) {
-                                fprintf(fp,"%d",real_table->unique_count);
+                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }else if (file_line_count == 4) {
-                                fprintf(fp,",%d\n",real_table->unique_count);
+                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
                                 file_line_count = 0;
                             }else{
-                                fprintf(fp,",%d",real_table->unique_count);
+                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }
                             printf("%d\n", real_table->unique_count);
 
-                            //leaveFront (window);
-                            //addBack(window, page_number);
-                            //TODO:  compare in the window and get unique
+                           
                         }
                     }
                 }else if(buffer[0] == 'I'){
@@ -241,8 +267,6 @@ int main(int argc, char *argv[]){
                             window->amount++;
                             add_new_node_on_table(page_number, bucket);
 
-                            //addBack(window, page_number);
-                            //window->amount = window->amount + 1;
                         }else{
                             add_new_window_node(bucket);
                             add_new_node_on_table(page_number, bucket);
@@ -250,21 +274,19 @@ int main(int argc, char *argv[]){
                             remove_node_on_table_and_window(window->first->bucket);
 
                             if (file_line_count == 0) {
-                                fprintf(fp,"%d",real_table->unique_count);
+                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }else if (file_line_count == 4) {
-                                fprintf(fp,",%d\n",real_table->unique_count);
+                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
                                 file_line_count = 0;
                             }else{
-                                fprintf(fp,",%d",real_table->unique_count);
+                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }
 
                             printf("%d\n", real_table->unique_count);
 
-                            //leaveFront (window);
-                            //addBack(window, page_number);
-                            //TODO:  compare in the window and get unique
+                    
                         }
 
                     }
@@ -292,8 +314,6 @@ int main(int argc, char *argv[]){
                     if (buffer[1] == 'S' || buffer[1] == 'M' ||  buffer[1] == 'L'){
                         int bucket;
                         dec_num = extract_number(buffer);
-                        //printf("%lli\n",dec_num/pagesize);
-
                         page_number = dec_num/pagesize;
                         bucket = page_number % hash_factor;
                         if (window->amount < wsize){
@@ -303,8 +323,6 @@ int main(int argc, char *argv[]){
 
                             add_new_node_on_table(page_number, bucket);
 
-                            //addBack(window, page_number);
-                            //window->amount = window->amount + 1;
                         }else{
                             add_new_window_node(bucket);
 
@@ -313,20 +331,18 @@ int main(int argc, char *argv[]){
                             remove_node_on_table_and_window(window->first->bucket);
 
                             if (file_line_count == 0) {
-                                fprintf(fp,"%d",real_table->unique_count);
+                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }else if (file_line_count == 4) {
-                                fprintf(fp,",%d\n",real_table->unique_count);
+                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
                                 file_line_count = 0;
                             }else{
-                                fprintf(fp,",%d",real_table->unique_count);
+                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }
 
                             printf("%d\n", real_table->unique_count);
-                            //leaveFront (window);
-                            //addBack(window, page_number);
-                            //TODO:  compare in the window and get unique
+                           
                         }
 
                     }
@@ -336,69 +352,11 @@ int main(int argc, char *argv[]){
         }
 
     }
-}
 
+    return 0;
 
-long long int extract_number(char * raw_data){
-    char extracted_hex[12];
-    long long int extracted_dec;
-    int length;
-
-    length = strlen(raw_data);
-    for(int i=3; i<length; i++){
-        if(raw_data[i] != ','){
-            extracted_hex[i-3] = raw_data[i];
-        }else{
-            extracted_hex[i-3] = '\0';
-        }
-    }
-    sscanf(extracted_hex, "%X", &extracted_dec);
-
-    return extracted_dec;
-}
-
-/*
-// would they work properly?
-bool isEmpty (const struct Window * window){
-	return window->first == NULL;
-}
-
-// would they work properly?
-bool isfull (const struct Window * window, int wsize){
-	return window->amount == wsize;
-}
-*/
-/*
-void leaveFront (struct Window * window){
-	assert(!isEmpty(window));
-	struct Node *old_first;
-    old_first = window->first;
-    window->first = old_first->next;
-    free(old_first);
-	if(window->first != NULL){
-		window->first-> prev = NULL;}
-	else{
-		window->last = NULL;}
-
+    
 }
 
 
 
-void addBack (struct Window * window, long long int page_number){
-	struct Node *new_node = malloc(sizeof(struct Node));
-	new_node->page_number = malloc(sizeof(page_number)+1);
-	new_node->page_number = page_number;
-	if(!isEmpty(window)){
-    	new_node->prev = window->last;
-    	window->last->next = new_node;
-    	window->last = new_node;
-		//free(new_node);
-	}else{
-		new_node->prev = NULL;
-		new_node->next = NULL;
-		window->first = new_node;
-		window->last = new_node;
-		//free(new_node);
-	}
-}
-*/
