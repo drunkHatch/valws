@@ -154,9 +154,14 @@ int main(int argc, char *argv[]){
     long long int   dec_num;
     long long int   page_number;
     int             hash_factor;
+    FILE            *fp;
+    char            *file_name;
+    int             file_line_count = 0;
 
     // what?
     buffer_size = sizeof(unsigned char)*BUFFERSIZE;
+    file_name = "data.csv";
+    fp=fopen(file_name,"w+");
     //init window
     //window->first = NULL;
     //window->last = NULL;
@@ -206,7 +211,16 @@ int main(int argc, char *argv[]){
                             add_new_node_on_table(page_number, bucket);
                             remove_node_on_table_and_window(window->first->bucket);
                             //remove_old_window_node();
-
+                            if (file_line_count == 0) {
+                                fprintf(fp,"%d",real_table->unique_count);
+                                file_line_count++;
+                            }else if (file_line_count == 4) {
+                                fprintf(fp,",%d\n",real_table->unique_count);
+                                file_line_count = 0;
+                            }else{
+                                fprintf(fp,",%d",real_table->unique_count);
+                                file_line_count++;
+                            }
                             printf("%d\n", real_table->unique_count);
 
                             //leaveFront (window);
@@ -235,7 +249,16 @@ int main(int argc, char *argv[]){
 
                             remove_node_on_table_and_window(window->first->bucket);
 
-                            //remove_old_window_node();
+                            if (file_line_count == 0) {
+                                fprintf(fp,"%d",real_table->unique_count);
+                                file_line_count++;
+                            }else if (file_line_count == 4) {
+                                fprintf(fp,",%d\n",real_table->unique_count);
+                                file_line_count = 0;
+                            }else{
+                                fprintf(fp,",%d",real_table->unique_count);
+                                file_line_count++;
+                            }
 
                             printf("%d\n", real_table->unique_count);
 
@@ -289,7 +312,17 @@ int main(int argc, char *argv[]){
 
                             remove_node_on_table_and_window(window->first->bucket);
 
-                            //remove_old_window_node();
+                            if (file_line_count == 0) {
+                                fprintf(fp,"%d",real_table->unique_count);
+                                file_line_count++;
+                            }else if (file_line_count == 4) {
+                                fprintf(fp,",%d\n",real_table->unique_count);
+                                file_line_count = 0;
+                            }else{
+                                fprintf(fp,",%d",real_table->unique_count);
+                                file_line_count++;
+                            }
+
                             printf("%d\n", real_table->unique_count);
                             //leaveFront (window);
                             //addBack(window, page_number);
