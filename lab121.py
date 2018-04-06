@@ -11,15 +11,6 @@ with open('data.csv','rt') as data:
         data = int(i[0])
         value.append(data)
 
-    #for j in value:
-        #count = value.count(j)
-        #freq.append(count)
-
-
-    
- 
-    
-    
 
 x1 = range(1,len(value)+1)
 y1 = value
