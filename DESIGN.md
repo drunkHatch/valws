@@ -1,4 +1,4 @@
-The program consists of three sub programs: valgrind, studnet program and gnuplot.
+The program consists of three sub programs: valgrind, studnet program and plot.
 
 Basic design:
 
@@ -35,7 +35,7 @@ Deailed design:
   Stream:
     valgrind -(generate one memory use report)->
       valws379 -(update by report then update unique)->
-        gnuplot -(get new unique then update diagram)->
+        
     When the stream ends, gnuplot generate plots we want via the stream
 
 
