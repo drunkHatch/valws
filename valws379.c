@@ -174,10 +174,6 @@ int main(int argc, char *argv[]){
     char            *file_name;
     int             file_line_count = 0;
 
-    //delcare for gnuplot
-    //FILE * temp = fopen("data.temp", "w");
-    FILE * gnuplotPipe = popen ("gnuplot -persistent", "w");
-    char * commandsForGnuplot[] = {"bin_width = 1"};
 
     // what?
     buffer_size = sizeof(unsigned char)*BUFFERSIZE;
@@ -187,15 +183,7 @@ int main(int argc, char *argv[]){
     //window->first = NULL;
     //window->last = NULL;
 
-    //fprintf(gnuplotPipe, "e");
-    for (int i=0; i < NUM_COMMANDS; i++){
-        fprintf(gnuplotPipe, "%s \n", commandsForGnuplot[i]); //Send commands to gnuplot one by one.
-    }
-    //fprintf(gnuplotPipe, "plot '-' smooth acsplines\n");
-    fprintf(gnuplotPipe, "plot '-' smooth frequency with boxes\n");
     
-
-
     if(argc == 3){                   //without [-i]
         pagesize = atoi(argv[1]);
         wsize = atoi(argv[2]);
@@ -240,13 +228,13 @@ int main(int argc, char *argv[]){
                             remove_node_on_table_and_window(window->first->bucket);
                             //remove_old_window_node();
                             if (file_line_count == 0) {
-                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
+                                fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }else if (file_line_count == 4) {
-                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
+                                fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count = 0;
                             }else{
-                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
+                                fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }
                             printf("%d\n", real_table->unique_count);
@@ -274,13 +262,13 @@ int main(int argc, char *argv[]){
                             remove_node_on_table_and_window(window->first->bucket);
 
                             if (file_line_count == 0) {
-                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
+                                fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }else if (file_line_count == 4) {
-                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
+                                fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count = 0;
                             }else{
-                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
+                                fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }
 
@@ -331,13 +319,13 @@ int main(int argc, char *argv[]){
                             remove_node_on_table_and_window(window->first->bucket);
 
                             if (file_line_count == 0) {
-                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
+                                fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }else if (file_line_count == 4) {
-                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
+                                fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count = 0;
                             }else{
-                                fprintf(gnuplotPipe, "%d\n", real_table->unique_count);
+                                fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }
 
