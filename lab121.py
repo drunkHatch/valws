@@ -8,8 +8,8 @@ with open('data.csv','rt') as data:
     for i in reader:
         #print(i)
         #print(type(i[0]))
-        data = int(i[0])
-        value.append(data)
+        data1 = int(i[0])
+        value.append(data1)
 
 
 x1 = range(1,len(value)+1)
