@@ -22,4 +22,12 @@ plt.plot(x1,y1)
 
 plt.show()
 
+narray=numpy.array(value)
+sum1=narray.sum()
+narray2=narray*narray
+sum2=narray2.sum()
+mean=sum1/len(value)
+var=sum2/(len(value)-mean**2)
+
+
 print("done")
