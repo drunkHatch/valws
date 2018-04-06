@@ -8,17 +8,9 @@
 #define HASHCONSTANT 4
 #define NUM_COMMANDS 1
 
-// a linked list, add to tail and remove from head
-    //next to tail
-    //prev to head
-    //need a funtion to add and a function to remove
-    // also remember to update table
-// a table, always place head in it, DONE
-
 // node for linked list
 struct ListNode{
     int bucket;   // divided by bucket number
-    //struct ListNode *prev;
     struct ListNode *next;
 };
 struct HashTable{
@@ -29,12 +21,11 @@ struct HashTable{
 
 // node for table
 struct Node{
-    long long int page_number;   // divided by 16(page size)
-    //struct Node *prev;
+    long long int page_number;   // divided by page size
     struct Node *next;
 };
 
-// is it the linked list I want?
+// window struct
 struct Window{
     int amount;
     struct ListNode *first;
@@ -42,7 +33,6 @@ struct Window{
 };
 
 // init hash table here and they are GLOBAL
-struct Node         *table, *tails;
 struct Window       *window;
 struct HashTable    *real_table;
 
@@ -58,6 +48,7 @@ void init_hash_table_and_window(int hash_factor){
     }
 }
 
+// extract memory address from valgrind input
 long long int extract_number(char * raw_data){
     char extracted_hex[12];
     long long int extracted_dec;
@@ -76,12 +67,12 @@ long long int extract_number(char * raw_data){
     return extracted_dec;
 }
 
+// if unique return 1 else 0
 int page_number_is_unique(long long int page_number_to_be_removed, int bucket){
     struct Node *current_node;
 
     current_node = real_table->table[bucket];
     while(current_node != NULL){
-        //printf("%p %p\n", current_node,  current_node->next);
         if (current_node->page_number == page_number_to_be_removed) {
             return 0;
         }
@@ -90,6 +81,7 @@ int page_number_is_unique(long long int page_number_to_be_removed, int bucket){
     return 1;
 }
 
+// remove oldest node
 void remove_node_on_table_and_window(int bucket){
     int page_number_to_be_removed;
     struct ListNode *old_head;
@@ -108,8 +100,7 @@ void remove_node_on_table_and_window(int bucket){
     }
 }
 
-
-
+// add new node
 void add_new_node_on_table(long long int new_page_number, int bucket){
     struct Node *current_node;
     struct Node *new_node;
@@ -139,11 +130,7 @@ void add_new_node_on_table(long long int new_page_number, int bucket){
     }
 }
 
-void remove_old_window_node(){
-    window->first = window->first->next;
-    //window->first->prev = NULL;
-}
-
+// add new node to window
 void add_new_window_node(int bucket){
     struct ListNode *new_node;
 
@@ -160,13 +147,9 @@ void add_new_window_node(int bucket){
 }
 
 int main(int argc, char *argv[]){
-    char            buffer[14];
     int             pagesize;
     int             wsize;
     FILE            *instream;
-    int             bytes_read = 0;
-    int             buffer_size = 0;
-    char            address[9];
     long long int   dec_num;
     long long int   page_number;
     int             hash_factor;
@@ -174,16 +157,9 @@ int main(int argc, char *argv[]){
     char            *file_name;
     int             file_line_count = 0;
 
-
-    // what?
-    buffer_size = sizeof(unsigned char)*BUFFERSIZE;
     file_name = "data.csv";
     fp=fopen(file_name,"w+");
-    //init window
-    //window->first = NULL;
-    //window->last = NULL;
 
-    
     if(argc == 3){                   //without [-i]
         pagesize = atoi(argv[1]);
         wsize = atoi(argv[2]);
@@ -202,31 +178,20 @@ int main(int argc, char *argv[]){
                     if (buffer[1] == 'S' || buffer[1] == 'M' ||  buffer[1] == 'L'){
                         int bucket;
                         dec_num = extract_number(buffer);
-                        //printf("%lli\n",dec_num/pagesize);
-
                         page_number = dec_num/pagesize;
                         bucket = page_number % hash_factor;
                         if (window->amount < wsize){
                             //add to window
-
                             add_new_window_node(bucket);
-
                             //increase window amount
-
                             window->amount++; // let it out to control easily between if else statement
-
                             //add to table
                             //increase table unique_count
-
                             add_new_node_on_table(page_number, bucket); // bug here
-
-
                         }else{
-
                             add_new_window_node(bucket);
                             add_new_node_on_table(page_number, bucket);
                             remove_node_on_table_and_window(window->first->bucket);
-                            //remove_old_window_node();
                             if (file_line_count == 0) {
                                 fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count++;
@@ -238,29 +203,22 @@ int main(int argc, char *argv[]){
                                 file_line_count++;
                             }
                             printf("%d\n", real_table->unique_count);
-
-                           
                         }
                     }
                 }else if(buffer[0] == 'I'){
                     if(buffer[1] == ' '){
                         int bucket;
                         dec_num = extract_number(buffer);
-                        //printf("%lli\n",dec_num/pagesize);
-
                         page_number = dec_num/pagesize;
                         bucket = page_number % hash_factor;
                         if (window->amount < wsize){
                             add_new_window_node(bucket);
                             window->amount++;
                             add_new_node_on_table(page_number, bucket);
-
                         }else{
                             add_new_window_node(bucket);
                             add_new_node_on_table(page_number, bucket);
-
                             remove_node_on_table_and_window(window->first->bucket);
-
                             if (file_line_count == 0) {
                                 fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count++;
@@ -271,19 +229,12 @@ int main(int argc, char *argv[]){
                                 fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }
-
                             printf("%d\n", real_table->unique_count);
-
-                    
                         }
-
                     }
                 }
             }
-            //fprintf(stdout,"%s\n",buffer);
         }
-
-
     }else{      // with [-i]
         pagesize = atoi(argv[2]);
         wsize = atoi(argv[3]);
@@ -306,18 +257,12 @@ int main(int argc, char *argv[]){
                         bucket = page_number % hash_factor;
                         if (window->amount < wsize){
                             add_new_window_node(bucket);
-
                             window->amount++;
-
                             add_new_node_on_table(page_number, bucket);
-
                         }else{
                             add_new_window_node(bucket);
-
                             add_new_node_on_table(page_number, bucket);
-
                             remove_node_on_table_and_window(window->first->bucket);
-
                             if (file_line_count == 0) {
                                 fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count++;
@@ -328,23 +273,12 @@ int main(int argc, char *argv[]){
                                 fprintf(fp, "%d\n", real_table->unique_count);
                                 file_line_count++;
                             }
-
                             printf("%d\n", real_table->unique_count);
-                           
                         }
-
                     }
                 }
             }
-            //fprintf(stdout,"%s\n",buffer);
         }
-
     }
-
     return 0;
-
-    
 }
-
-
-
