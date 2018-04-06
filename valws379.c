@@ -147,6 +147,7 @@ void add_new_window_node(int bucket){
 }
 
 int main(int argc, char *argv[]){
+    char            buffer[14];
     int             pagesize;
     int             wsize;
     FILE            *instream;
