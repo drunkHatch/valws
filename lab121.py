@@ -29,5 +29,8 @@ sum2=narray2.sum()
 mean=sum1/len(value)
 var=sum2/(len(value)-mean**2)
 
+print(mean)
+print(var)
+
 
 print("done")
